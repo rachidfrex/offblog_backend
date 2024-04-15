@@ -37,4 +37,14 @@ class userController extends Controller
         
 
     }
+    // login
+    public function login(Request $req)
+    {
+        $user = User::where('email', $req->email)->first();
+        if (!$user || !Hash::check($req->password, $user->password)) {
+            return response()->json(['error' => 'Invalid email or password'], 401);
+        }
+        return response()->json(['success' => 'Login successful'], 200);
+    }
+    
 }
