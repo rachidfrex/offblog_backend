@@ -39,7 +39,7 @@ class BlogController extends Controller
     public function getBlog($id)
     {
         $blog = Blog::find($id);
-        if ($blog != null) {
+        if ($blog) {
             return response()->json($blog, 200);
         } else {
             return response()->json(['error' => 'Blog not found'], 404);
