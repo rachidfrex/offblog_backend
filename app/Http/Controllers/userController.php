@@ -17,10 +17,10 @@ class userController extends Controller
    // i want the username to be created automatically from the name and be usique
     public function register(Request $req)
     {
+
         $user = new User;
         $user->name = $req->input('name');
         $user->email = $req->input('email');
-        // $user->username = $req->input('username');
         $user->profile_image = $req->input('profile_image');
         $password = $req->input('password');
         $confirmPassword = $req->input('confirmPassword');
@@ -36,7 +36,7 @@ class userController extends Controller
         //  
         $user->password = Hash::make($password);
         $user->save();
-        if ($user) {
+        if ($user != null) {
 
             return response()->json(['success' => 'Registration successful'], 201);
         } else {
