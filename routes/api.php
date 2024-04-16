@@ -24,5 +24,8 @@ Route::post('/register', [userController::class , 'register']);
 Route::post('/login', [userController::class , 'login']);
 Route::post('/logout', [userController::class , 'logout']);
 
-
+// blog routes
 Route::post('/createBlog', [BlogController::class , 'createBlog']);
+//getBlogs
+Route::get('/getBlogs', [BlogController::class , 'getBlogs']);
+Route::get('/getBlog/{id}', [BlogController::class , 'getBlog']);

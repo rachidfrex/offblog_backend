@@ -15,7 +15,9 @@ class BlogController extends Controller
         $blog->image_url = $req->input('image_url');
         $blog->user_id = $req->input('user_id');
         $blog->category_id = $req->input('category_id');
-        $blog->likes_count = $req->input('likes_count');
+        // set likes_count to 0 be default
+        $blog->likes_count = 0;
+      
         $blog->save();
         if ($blog != null) {
             return response()->json(['success' => 'Blog created successfully'], 201);
@@ -27,7 +29,11 @@ class BlogController extends Controller
     public function getBlogs()
     {
         $blogs = Blog::all();
-        return response()->json($blogs, 200);
+        if ($blogs->count() > 0) {
+            return response()->json($blogs, 200);
+        } else {
+            return response()->json(['error' => 'Blogs not found'], 404);
+        }
     }
 
     public function getBlog($id)
