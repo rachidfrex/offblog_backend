@@ -3,22 +3,45 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Blog; 
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
+use App\Models\Blog;
+
 
 class BlogController extends Controller
 {
     public function createBlog(Request $req)
     {
+        
         $blog = new Blog;
         $blog->title = $req->input('title');
         $blog->content = $req->input('content');
-        $blog->image_url = $req->input('image_url');
         $blog->user_id = $req->input('user_id');
         $blog->category_id = $req->input('category_id');
         // set likes_count to 0 be default
         $blog->likes_count = 0;
-      
+
+        if ($req->has('images')) {
+            $images = $req->file('images');
+            foreach($images as $image) {
+                $validator = Validator::make(
+                    ['image' => $image],
+                    ['image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048']
+                );
+
+                if($validator->fails()) {
+                    return response()->json(["status" => "failed", "message" => "Validation error", "errors" => $validator->errors()]);
+                }
+
+                $filename = Str::random(32).".".$image->getClientOriginalExtension();
+                $image->move('public/images/', $filename);
+                $blog->image_url = '/images/'.$filename;
+            }
+        }
+     
         $blog->save();
+       
         if ($blog != null) {
             return response()->json(['success' => 'Blog created successfully'], 201);
         } else {
