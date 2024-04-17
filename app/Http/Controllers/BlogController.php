@@ -21,7 +21,18 @@ class BlogController extends Controller
         $blog->category_id = $req->input('category_id');
         // set likes_count to 0 be default
         $blog->likes_count = 0;
-    
+
+        if($req->hasFile('image_url')) {
+            $image = $req->file('image_url');
+            // $name = Str::slug($req->input('title')).'_'.time();
+            // $folder = '/uploads/images/';
+            // $filePath = $folder . $name. '.' . $image->getClientOriginalExtension();
+            // $this->uploadOne($image, $folder, 'public', $name);
+            // $blog->image_url = $filePath;
+            $fileName = $image->getClientOriginalName();
+            $finalname = date('His').$fileName;
+            $req->file('image_url')->storeAs('images/', $finalname , 'public');
+        }
         
     
         $blog->save();
