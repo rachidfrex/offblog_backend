@@ -13,7 +13,7 @@ class BlogController extends Controller
 {
     public function createBlog(Request $req)
     {
-        
+        $response = [];
         $blog = new Blog;
         $blog->title = $req->input('title');
         $blog->content = $req->input('content');
@@ -21,34 +21,21 @@ class BlogController extends Controller
         $blog->category_id = $req->input('category_id');
         // set likes_count to 0 be default
         $blog->likes_count = 0;
-
-        if ($req->has('images')) {
-            $images = $req->file('images');
-            foreach($images as $image) {
-                $validator = Validator::make(
-                    ['image' => $image],
-                    ['image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048']
-                );
-
-                if($validator->fails()) {
-                    return response()->json(["status" => "failed", "message" => "Validation error", "errors" => $validator->errors()]);
-                }
-
-                $filename = Str::random(32).".".$image->getClientOriginalExtension();
-                $image->move('public/images/', $filename);
-                $blog->image_url = '/images/'.$filename;
-            }
-        }
-     
+    
+        
+    
         $blog->save();
-       
+    
         if ($blog != null) {
-            return response()->json(['success' => 'Blog created successfully'], 201);
+            $response['status'] = 'success';
+            $response['message'] = 'Blog created successfully';
+            return response()->json($response, 201);
         } else {
-            return response()->json(['error' => 'Blog creation failed'], 400);
+            $response['status'] = 'error';
+            $response['message'] = 'Blog creation failed';
+            return response()->json($response, 400);
         }
     }
-
     public function getBlogs()
     {
         $blogs = Blog::all();
