@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use App\Models\Blog;
 
+use Illuminate\Support\Facades\Storage;
+
+
 
 class BlogController extends Controller
 {
@@ -22,17 +25,34 @@ class BlogController extends Controller
         // set likes_count to 0 be default
         $blog->likes_count = 0;
 
+        // if($req->hasFile('image_url')) {
+        //     $image = $req->file('image_url');
+        //     $fileName = $image->getClientOriginalName();
+        //     $finalname = date('His').$fileName;
+        //     $req->file('image_url')->storeAs('images/', $finalname , 'public');
+        //     $blog->image_url = $finalname;
+        // }
+        
         if($req->hasFile('image_url')) {
+            // Validate the uploaded file
+            $req->validate([
+                'image_url' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            ]);
+
             $image = $req->file('image_url');
-            // $name = Str::slug($req->input('title')).'_'.time();
-            // $folder = '/uploads/images/';
-            // $filePath = $folder . $name. '.' . $image->getClientOriginalExtension();
-            // $this->uploadOne($image, $folder, 'public', $name);
-            // $blog->image_url = $filePath;
-            $fileName = $image->getClientOriginalName();
-            $finalname = date('His').$fileName;
-            $req->file('image_url')->storeAs('images/', $finalname , 'public');
+
+            // Generate a safe file name
+            $name = Str::slug($req->input('title')).'_'.time();
+            $extension = $image->getClientOriginalExtension();
+            $fileName = "{$name}.{$extension}";
+
+            // Store the file in the 'public' disk, in the 'images/' directory
+            $image->storeAs('images', $fileName, 'public');
+
+            // Store the full path to the image in the 'image_url' field
+            $blog->image_url = Storage::url("images/{$fileName}");
         }
+
         
     
         $blog->save();
