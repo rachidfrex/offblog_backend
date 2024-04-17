@@ -58,13 +58,13 @@ class BlogController extends Controller
         $blog->save();
     
         if ($blog != null) {
-            $response['status'] = 'success';
-            $response['message'] = 'Blog created successfully';
+            $response = [
+                'success' => 'Blog created successfully',
+                'blog' => $blog
+            ];
             return response()->json($response, 201);
         } else {
-            $response['status'] = 'error';
-            $response['message'] = 'Blog creation failed';
-            return response()->json($response, 400);
+            return response()->json(['error' => 'Blog creation failed'], 400);
         }
     }
     public function getBlogs()
