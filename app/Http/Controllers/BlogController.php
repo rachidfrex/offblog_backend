@@ -149,7 +149,6 @@ public function createBlog(Request $req)
         $blog->image_url = Storage::url("images/{$fileName}");
     }
 
-    $blog->save();
 
     
     // Find the categories by name and get their IDs
@@ -161,10 +160,18 @@ public function createBlog(Request $req)
     if ($categories->isEmpty()) {
         return response()->json(['error' => 'Invalid category names'], 400);
     }
+    $blog->save();
 
     // Associate the blog with the categories
     $blog->categories()->sync($categories->pluck('id'));
-  
+    
+    // try {
+    //     $blog->categories()->sync($categories->pluck('id'));
+    // } catch (\Exception $e) {
+    //     return response()->json(['error' => $e->getMessage()], 'the error is here');
+    // }
+
+
     if ($blog != null) {
         $response = [
             'success' => 'Blog created successfully',
