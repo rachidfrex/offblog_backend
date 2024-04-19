@@ -49,14 +49,42 @@ class userController extends Controller
 
 
     // login
+    // public function login(Request $req)
+    // {
+    //     $user = User::where('email', $req->email)->first();
+    //     if (!$user || !Hash::check($req->password, $user->password)) {
+    //         return response()->json(['error' => 'Invalid email or password'], 401);
+    //     }
+    //     return response()->json(['success' => 'Login successful'], 200);
+    // }
     public function login(Request $req)
-    {
-        $user = User::where('email', $req->email)->first();
-        if (!$user || !Hash::check($req->password, $user->password)) {
-            return response()->json(['error' => 'Invalid email or password'], 401);
-        }
-        return response()->json(['success' => 'Login successful'], 200);
+{
+    $user = User::where('email', $req->email)->first();
+    if (!$user || !Hash::check($req->password, $user->password)) {
+        return response()->json(['error' => 'Invalid email or password'], 401);
     }
+    return response()->json(['success' => 'Login successful', 'user_id' => $user->id], 200);
+}
+
+// public function login(Request $request)
+// {
+//     $credentials = $request->only('email', 'password');
+
+//     if (Auth::attempt($credentials)) {
+//         // Authentication passed...
+//         $user = Auth::user();
+//         return response()->json([
+//             'success' => 'Login successful',
+//             'user_id' => $user->id, // Include the user's ID in the response
+//         ]);
+//     } else {
+//         // Authentication failed...
+//         return response()->json([
+//             'error' => 'Login failed',
+//         ]);
+//     }
+// }
+
     // logout
     public function logout(Request $req)
     {
