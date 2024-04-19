@@ -157,8 +157,8 @@ public function createBlog(Request $req)
     $categories = Category::whereIn('name', $categoryNames)->get();
     
 
-    if ($categories->isEmpty()) {
-        return response()->json(['error' => 'Invalid category names'], 400);
+    if (count($categoryNames) != count($categories)) {
+        return response()->json(['error' => 'One or more category names are invalid']);
     }
     $blog->save();
 
