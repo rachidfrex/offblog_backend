@@ -151,9 +151,11 @@ public function createBlog(Request $req)
 
     $blog->save();
 
+    
     // Find the categories by name and get their IDs
-    $categoryNames = $req->input('category_name');
+    $categoryNames = $req->input('categories');
     $categories = Category::whereIn('name', $categoryNames)->get();
+    
 
     if ($categories->isEmpty()) {
         return response()->json(['error' => 'Invalid category names'], 400);
