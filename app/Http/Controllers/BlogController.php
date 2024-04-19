@@ -128,7 +128,7 @@ public function createBlog(Request $req)
 
     // set likes_count to 0 be default
     $blog->likes_count = 0;
-
+    error_log(print_r($blog, true));
     if($req->hasFile('image_url')) {
         // Validate the uploaded file
         $req->validate([
@@ -153,7 +153,8 @@ public function createBlog(Request $req)
 
     
     // Find the categories by name and get their IDs
-    $categoryNames = $req->input('categories');
+    $categoryNames = json_decode($req->input('categories'));
+
     $categories = Category::whereIn('name', $categoryNames)->get();
     
 
@@ -163,7 +164,7 @@ public function createBlog(Request $req)
 
     // Associate the blog with the categories
     $blog->categories()->sync($categories->pluck('id'));
-
+  
     if ($blog != null) {
         $response = [
             'success' => 'Blog created successfully',
@@ -171,7 +172,9 @@ public function createBlog(Request $req)
         ];
         return response()->json($response, 201);
     } else {
-        return response()->json(['error' => 'Blog creation failed'], 400);
+        
+    return response()->json(['error' => 'Blog creation failed'], 500);
+
     }
 }
 
