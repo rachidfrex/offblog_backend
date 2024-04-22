@@ -15,36 +15,39 @@ class userController extends Controller
     // 'profile_image',
     // 'role',
    // i want the username to be created automatically from the name and be usique
-    public function register(Request $req)
-    {
-
-        $user = new User;
-        $user->name = $req->input('name');
-        $user->email = $req->input('email');
-        $user->profile_image = $req->input('profile_image');
-        $password = $req->input('password');
-        $confirmPassword = $req->input('confirmPassword');
-        if ($password !== $confirmPassword) {
-            return response()->json(['error' => 'Passwords do not match'], 400);
-        }
-        
-        $existingUser = User::where('email', $user->email)->first();
-        if ($existingUser) {
-            return response()->json(['error' => 'Email already exists'], 400);
-        }
-
-        //  
-        $user->password = Hash::make($password);
-        $user->save();
-        if ($user != null) {
-
-            return response()->json(['success' => 'Registration successful'], 201);
-        } else {
-            return response()->json(['error' => 'Registration failed'], 400);
-        }
-        
-
-    }
+   
+   public function register(Request $req)
+   {
+       $user = new User;
+       $user->name = $req->input('name');
+       $user->email = $req->input('email');
+       $password = $req->input('password');
+       $confirmPassword = $req->input('confirmPassword');
+       if ($password !== $confirmPassword) {
+           return response()->json(['error' => 'Passwords do not match'], 400);
+       }
+       
+       $existingUser = User::where('email', $user->email)->first();
+       if ($existingUser) {
+           return response()->json(['error' => 'Email already exists'], 400);
+       }
+   
+       // Handle the profile image upload
+       if ($req->hasFile('profile_image')) {
+           $path = $req->file('profile_image')->storePublicly('profile_images', 'public');
+           $user->profile_image = $path;
+       }
+   
+       $user->password = Hash::make($password);
+       $user->save();
+       if ($user != null) {
+           return response()->json(['success' => 'Registration successful'], 201);
+       } else {
+           return response()->json(['error' => 'Registration failed'], 400);
+       }
+   }
+   
+   
    
 
 

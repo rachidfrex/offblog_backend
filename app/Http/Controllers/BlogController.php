@@ -129,6 +129,7 @@ public function createBlog(Request $req)
     // set likes_count to 0 be default
     $blog->likes_count = 0;
     error_log(print_r($blog, true));
+    
     if($req->hasFile('image_url')) {
         // Validate the uploaded file
         $req->validate([
