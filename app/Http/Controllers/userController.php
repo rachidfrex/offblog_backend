@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class userController extends Controller
 {
@@ -32,11 +34,31 @@ class userController extends Controller
            return response()->json(['error' => 'Email already exists'], 400);
        }
    
-       // Handle the profile image upload
-       if ($req->hasFile('profile_image')) {
-           $path = $req->file('profile_image')->storePublicly('profile_images', 'public');
-           $user->profile_image = $path;
-       }
+    //    Handle the profile image upload
+    //    if ($req->hasFile('profile_image')) {
+    //        $path = $req->file('profile_image')->storePublicly('profile_images', 'public');
+    //        $user->profile_image = $path;
+    //    }
+    // Handle the profile image upload
+    if($req->hasFile('profile_image')) {
+        // Validate the uploaded file
+        $req->validate([
+            'profile_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        $image = $req->file('profile_image');
+
+        // Generate a safe file name
+        $name = Str::slug($req->input('name')).'_'.time();
+        $extension = $image->getClientOriginalExtension();
+        $fileName = "{$name}.{$extension}";
+
+        // Store the file in the 'public' disk, in the 'profile_images/' directory
+        $image->storeAs('profile_images', $fileName, 'public');
+
+        // Store the full path to the image in the 'profile_image' field
+        $user->profile_image = Storage::url("profile_images/{$fileName}");
+    }
    
        $user->password = Hash::make($password);
        $user->save();
@@ -87,6 +109,57 @@ class userController extends Controller
 //         ]);
 //     }
 // }
+   
+
+    //get user
+    public function getUserInfo(Request $req, $id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+        return response()->json(['user' => $user], 200);
+    }
+
+    // update user
+    
+    public function updateProfile(Request $req, $id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+    
+        $user->name = $req->input('name', $user->name);
+        $user->email = $req->input('email', $user->email);
+    
+        // Handle the profile image upload
+        if($req->hasFile('profile_image')) {
+            // Validate the uploaded file
+            $req->validate([
+                'profile_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            ]);
+    
+            $image = $req->file('profile_image');
+    
+            // Generate a safe file name
+            $name = Str::slug($req->input('name')).'_'.time();
+            $extension = $image->getClientOriginalExtension();
+            $fileName = "{$name}.{$extension}";
+    
+            // Store the file in the 'public' disk, in the 'profile_images/' directory
+            $image->storeAs('profile_images', $fileName, 'public');
+    
+            // Store the full path to the image in the 'profile_image' field
+            $user->profile_image = Storage::url("profile_images/{$fileName}");
+        }
+    
+        $user->save();
+    
+        return response()->json(['success' => 'Profile updated successfully', 'user' => $user], 200);
+    }
+
+
 
     // logout
     public function logout(Request $req)
@@ -96,3 +169,5 @@ class userController extends Controller
     }
 
 }
+
+           
