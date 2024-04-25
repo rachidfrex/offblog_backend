@@ -121,11 +121,12 @@ public function createBlog(Request $req)
         public function getUserBlogs($user_id)
         {
             $blogs = Blog::where('user_id', $user_id)->get();
-            if ($blogs->isEmpty()) {
-                return response()->json(['error' => 'No blogs found for this user'], 404);
+            if ($blogs) {
+                return response()->json($blogs, 200);
+            } else {
+                return response()->json(['error' => 'Blogs not found'], 404);
             }
 
-            return response()->json(['blogs' => $blogs], 200);
         }
         // get the blog by id
         public function getBlog($id)
