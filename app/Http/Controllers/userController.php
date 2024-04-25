@@ -122,42 +122,46 @@ class userController extends Controller
     }
 
     // update user
-    
-    public function updateProfile(Request $req, $id)
-    {
-        $user = User::find($id);
-        if (!$user) {
-            return response()->json(['error' => 'User not found'], 404);
-        }
-    
-        $user->name = $req->input('name', $user->name);
-        $user->email = $req->input('email', $user->email);
-    
-        // Handle the profile image upload
-        if($req->hasFile('profile_image')) {
-            // Validate the uploaded file
-            $req->validate([
-                'profile_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            ]);
-    
-            $image = $req->file('profile_image');
-    
-            // Generate a safe file name
-            $name = Str::slug($req->input('name')).'_'.time();
-            $extension = $image->getClientOriginalExtension();
-            $fileName = "{$name}.{$extension}";
-    
-            // Store the file in the 'public' disk, in the 'profile_images/' directory
-            $image->storeAs('profile_images', $fileName, 'public');
-    
-            // Store the full path to the image in the 'profile_image' field
-            $user->profile_image = Storage::url("profile_images/{$fileName}");
-        }
-    
-        $user->save();
-    
-        return response()->json(['success' => 'Profile updated successfully', 'user' => $user], 200);
+public function updateProfile(Request $req, $id)
+{
+    $user = User::find($id);
+    if (!$user) {
+        return response()->json(['error' => 'User not found'], 404);
     }
+
+    if ($req->has('name')) {
+        $user->name = $req->input('name');
+    }
+    if ($req->has('email')) {
+        $user->email = $req->input('email');
+    }
+
+    // Handle the profile image upload
+    if($req->hasFile('profile_image')) {
+        // Validate the uploaded file
+        $req->validate([
+            'profile_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        $image = $req->file('profile_image');
+
+        // Generate a safe file name
+        $name = Str::slug($req->input('name')).'_'.time();
+        $extension = $image->getClientOriginalExtension();
+        $fileName = "{$name}.{$extension}";
+
+        // Store the file in the 'public' disk, in the 'profile_images/' directory
+        $image->storeAs('profile_images', $fileName, 'public');
+
+        // Store the full path to the image in the 'profile_image' field
+        $user->profile_image = Storage::url("profile_images/{$fileName}");
+    }
+
+    $user->save();
+
+    return response()->json(['success' => 'Profile updated successfully', 'user' => $user], 200);
+}
+
 
 
 
