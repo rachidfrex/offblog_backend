@@ -96,17 +96,7 @@ public function createBlog(Request $req)
     }
 }
 
-// get the blog by id
-public function getBlog($id)
-{
-    $blog = Blog::find($id);
-    if ($blog) {
-        $blog->load('categories');
-        return response()->json($blog, 200);
-    } else {
-        return response()->json(['error' => 'Blog not found'], 404);
-    }
-}
+
 
 
 
@@ -136,6 +126,17 @@ public function getBlog($id)
             }
 
             return response()->json(['blogs' => $blogs], 200);
+        }
+        // get the blog by id
+        public function getBlog($id)
+        {
+            $blog = Blog::find($id);
+            if ($blog) {
+                $blog->load('categories');
+                return response()->json($blog, 200);
+            } else {
+                return response()->json(['error' => 'Blog not found'], 404);
+            }
         }
 
     public function deleteBlog($id)
