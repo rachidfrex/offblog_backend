@@ -34,18 +34,11 @@ public function createBlog(Request $req)
         $req->validate([
             'image_url' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-
         $image = $req->file('image_url');
-
-        // Generate a safe file name
         $name = Str::slug($req->input('title')).'_'.time();
         $extension = $image->getClientOriginalExtension();
         $fileName = "{$name}.{$extension}";
-
-        // Store the file in the 'public' disk, in the 'images/' directory
         $image->storeAs('images', $fileName, 'public');
-
-        // Store the full path to the image in the 'image_url' field
         $blog->image_url = Storage::url("images/{$fileName}");
     }
 

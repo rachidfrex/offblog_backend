@@ -16,6 +16,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('profile_image')->nullable();
             $table->string('role')->default('user'); // Default role is 'user'
+            $table->text('bio')->nullable();
             $table->timestamps();
         });
     }

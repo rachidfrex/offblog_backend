@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class userController extends Controller
 {
@@ -124,7 +125,9 @@ class userController extends Controller
     // update user
 public function updateProfile(Request $req, $id)
 {
+    Log::info('Request data:', $req->all());
     $user = User::find($id);
+    Log::info('User before update:', $user->toArray());
     if (!$user) {
         return response()->json(['error' => 'User not found'], 404);
     }
@@ -144,20 +147,16 @@ public function updateProfile(Request $req, $id)
         ]);
 
         $image = $req->file('profile_image');
-
-        // Generate a safe file name
         $name = Str::slug($req->input('name')).'_'.time();
         $extension = $image->getClientOriginalExtension();
         $fileName = "{$name}.{$extension}";
-
-        // Store the file in the 'public' disk, in the 'profile_images/' directory
         $image->storeAs('profile_images', $fileName, 'public');
-
-        // Store the full path to the image in the 'profile_image' field
         $user->profile_image = Storage::url("profile_images/{$fileName}");
     }
-
+   
     $user->save();
+
+    Log::info('User after update:', $user->toArray());
 
     return response()->json(['success' => 'Profile updated successfully', 'user' => $user], 200);
 }
