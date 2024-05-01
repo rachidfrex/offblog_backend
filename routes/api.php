@@ -32,6 +32,8 @@ Route::get('/user/{userId}/blogs', [BlogController::class , 'getUserBlogs']);
 
 // blog routes
 Route::post('/createBlog', [BlogController::class , 'createBlog']);
+Route::delete('/blog/{id}', [BlogController::class , 'deleteBlog']);
+
 //getBlogs
 Route::get('/getBlogs', [BlogController::class , 'getBlogs']);
 Route::get('/getBlog/{id}', [BlogController::class , 'getBlog']);

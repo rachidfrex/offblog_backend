@@ -132,15 +132,20 @@ public function createBlog(Request $req)
                 return response()->json(['error' => 'Blog not found'], 404);
             }
         }
+    // delete the blog by id
+                public function deleteBlog($id)
+            {
+                $blog = Blog::find($id);
+                if ($blog != null) {
+                    // Delete the image file
+                    if ($blog->image_path != null) {
+                        Storage::delete($blog->image_path);
+                    }
 
-    public function deleteBlog($id)
-    {
-        $blog = Blog::find($id);
-        if ($blog != null) {
-            $blog->delete();
-            return response()->json(['success' => 'Blog deleted successfully'], 200);
-        } else {
-            return response()->json(['error' => 'Blog not found'], 404);
-        }
-    }
+                    $blog->delete();
+                    return response()->json(['success' => 'Blog deleted successfully'], 200);
+                } else {
+                    return response()->json(['error' => 'Blog not found'], 404);
+                }
+            }
 }
