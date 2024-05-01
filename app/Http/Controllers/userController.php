@@ -161,6 +161,35 @@ public function updateProfile(Request $req, $id)
     return response()->json(['success' => 'Profile updated successfully', 'user' => $user], 200);
 }
 
+// update password
+public function updatePassword(Request $req, $id)
+{
+    $user = User::find($id);
+    if (!$user) {
+        return response()->json(['error' => 'User not found'], 404);
+    }
+
+    $oldPassword = $req->input('oldPassword');
+    $newPassword = $req->input('newPassword');
+    $repeatPassword = $req->input('repeatPassword');
+
+    if (!Hash::check($oldPassword, $user->password)) {
+        return response()->json(['error' => 'Old password is incorrect'], 400);
+    }
+
+    if ($newPassword === $oldPassword) {
+        return response()->json(['error' => 'New password must be different.'], 400);
+    }
+
+    if ($newPassword !== $repeatPassword) {
+        return response()->json(['error' => 'New passwords do not match'], 400);
+    }
+
+    $user->password = Hash::make($newPassword);
+    $user->save();
+
+    return response()->json(['success' => 'Password updated successfully'], 200);
+}
 
 
 

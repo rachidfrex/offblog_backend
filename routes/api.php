@@ -25,6 +25,8 @@ Route::post('/login', [userController::class , 'login']);
 Route::post('/logout', [userController::class , 'logout']);
 Route::get('/user/{id}', [userController::class , 'getUserInfo']);
 Route::put('/user/{id}', [userController::class , 'updateProfile']);
+Route::put('/user/{id}/password', [userController::class , 'updatePassword']);
+
 // Route::post('/user/{id}', [userController::class , 'updateProfile']);
 // get user blogs
 Route::get('/user/{userId}/blogs', [BlogController::class , 'getUserBlogs']);
