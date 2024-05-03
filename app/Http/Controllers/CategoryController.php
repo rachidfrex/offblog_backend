@@ -50,21 +50,21 @@ public function createCategory(Request $request)
     }
 
     if ($request->hasFile('image_url')) {
-        $request->validate([
-            'image_url' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
+        // $request->validate([
+        //     'image_url' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        // ]);
         $image = $request->file('image_url');
         $name = Str::slug($request->input('name')).'_'.time();
         $extension = $image->getClientOriginalExtension();
         $fileName = "{$name}.{$extension}";
-        $image->storeAs('public/storage/category_images', $fileName);
+        $image->storeAs('category_images', $fileName , 'public');
     } else {
         return response()->json(['error' => 'No category image provided'], 400);
     }
 
     $category = new Category;
     $category->name = $categoryName;
-    $category->image_url = Storage::url("public/storage/category_images/{$fileName}");
+    $category->image_url = Storage::url("category_images/{$fileName}");
     $category->save();
 
     return response()->json(['success' => 'Category created successfully'], 200);
