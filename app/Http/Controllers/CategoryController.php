@@ -69,6 +69,16 @@ public function createCategory(Request $request)
 
     return response()->json(['success' => 'Category created successfully'], 200);
 }
+// get all categories
+    public function getCategories()
+    {
+        $categories = Category::all();
+        if ($categories->count() > 0) {
+            return response()->json($categories, 200);
+        } else {
+            return response()->json(['error' => 'Categories not found'], 404);
+        }
+    }
 
 
     // delete a category

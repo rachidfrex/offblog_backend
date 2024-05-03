@@ -44,3 +44,4 @@ Route::get('/getBlog/{id}', [BlogController::class , 'getBlog']);
 // create category
 Route::post('/category', [CategoryController::class , 'createCategory']);
 Route::delete('/category/{id}', [CategoryController::class , 'deleteCategory']);
+Route::get('/categories', [CategoryController::class , 'getCategories']);

@@ -57,13 +57,6 @@ public function createBlog(Request $req)
 
     // Associate the blog with the categories
     $blog->categories()->sync($categories->pluck('id'));
-    
-    // try {
-    //     $blog->categories()->sync($categories->pluck('id'));
-    // } catch (\Exception $e) {
-    //     return response()->json(['error' => $e->getMessage()], 'the error is here');
-    // }
-
 
     if ($blog != null) {
         $response = [
@@ -80,14 +73,15 @@ public function createBlog(Request $req)
  
 // get all the blogs
     public function getBlogs()
-{
-    $blogs = Blog::with('categories')->get();
-    if ($blogs->count() > 0) {
-        return response()->json($blogs, 200);
-    } else {
-        return response()->json(['error' => 'Blogs not found'], 404);
+    {
+        $blogs = Blog::with(['categories', 'user'])->get();
+        if ($blogs->count() > 0) {
+            return response()->json($blogs, 200);
+        } else {
+            return response()->json(['error' => 'Blogs not found'], 404);
+        }
     }
-}
+
 
 
 
