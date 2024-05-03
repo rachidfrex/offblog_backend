@@ -4,6 +4,7 @@ use App\Http\Controllers\userController;
 use App\Http\Controllers\BlogController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,3 +40,7 @@ Route::delete('/blog/{id}', [BlogController::class , 'deleteBlog']);
 //getBlogs
 Route::get('/getBlogs', [BlogController::class , 'getBlogs']);
 Route::get('/getBlog/{id}', [BlogController::class , 'getBlog']);
+
+// create category
+Route::post('/category', [CategoryController::class , 'createCategory']);
+Route::delete('/category/{id}', [CategoryController::class , 'deleteCategory']);

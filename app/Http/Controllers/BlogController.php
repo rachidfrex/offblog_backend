@@ -51,7 +51,7 @@ public function createBlog(Request $req)
     
 
     if (count($categoryNames) != count($categories)) {
-        return response()->json(['error' => 'One or more category names are invalid']);
+        return response()->json(['error' => 'One of the categories does not exist']);
     }
     $blog->save();
 
@@ -77,7 +77,7 @@ public function createBlog(Request $req)
 
     }
 }
-
+ 
 // get all the blogs
     public function getBlogs()
 {
