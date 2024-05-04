@@ -36,6 +36,7 @@ Route::get('/user/{userId}/blogs', [BlogController::class , 'getUserBlogs']);
 // blog routes
 Route::post('/createBlog', [BlogController::class , 'createBlog']);
 Route::delete('/blog/{id}', [BlogController::class , 'deleteBlog']);
+Route::post('/blogs/{id}/like', 'App\Http\Controllers\BlogController@toggleLike');
 
 //getBlogs
 Route::get('/getBlogs', [BlogController::class , 'getBlogs']);
