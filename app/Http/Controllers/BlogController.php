@@ -83,10 +83,6 @@ public function createBlog(Request $req)
     }
 
 
-
-
-
-
     public function updateBlog(Request $req, $id)
     {
         $blog = Blog::find($id);
@@ -117,15 +113,15 @@ public function createBlog(Request $req)
         }
         // get the blog by id
         public function getBlog($id)
-        {
-            $blog = Blog::find($id);
-            if ($blog) {
-                $blog->load('categories');
-                return response()->json($blog, 200);
-            } else {
-                return response()->json(['error' => 'Blog not found'], 404);
+            {
+                $blog = Blog::find($id);
+                if ($blog) {
+                    $blog->load(['categories', 'user']);
+                    return response()->json($blog, 200);
+                } else {
+                    return response()->json(['error' => 'Blog not found'], 404);
+                }
             }
-        }
     // delete the blog by id
                 public function deleteBlog($id)
             {
@@ -141,5 +137,28 @@ public function createBlog(Request $req)
                 } else {
                     return response()->json(['error' => 'Blog not found'], 404);
                 }
+            }
+
+            // like the blog
+            public function toggleLike(Request $request, $id)
+            {
+                $user = $request->user(); // Get the currently authenticated user
+                $blog = Blog::find($id);
+
+                if (!$blog) {
+                    return response()->json(['error' => 'Blog not found'], 404);
+                }
+
+                if ($user->hasLiked($blog)) {
+                    $blog->likes_count--;
+                    $user->unlike($blog);
+                } else {
+                    $blog->likes_count++;
+                    $user->like($blog);
+                }
+
+                $blog->save();
+
+                return response()->json($blog, 200);
             }
 }

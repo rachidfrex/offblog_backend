@@ -17,14 +17,6 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-// $table->id();
-// $table->string('name');
-// $table->string('username')->unique();
-// $table->string('email')->unique(); 
-// $table->string('password');
-// $table->string('profile_image')->nullable();
-// $table->string('role')->default('user'); // Default role is 'user'
-// $table->timestamps();
     protected $fillable = [
         'name',
         'email',
