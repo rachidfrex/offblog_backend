@@ -50,6 +50,7 @@ public function createBlog(Request $req)
     $categories = Category::whereIn('name', $categoryNames)->get();
     
 
+
     if (count($categoryNames) != count($categories)) {
         return response()->json(['error' => 'One of the categories does not exist']);
     }
@@ -161,4 +162,16 @@ public function createBlog(Request $req)
 
                 return response()->json($blog, 200);
             }
+            // category 
+            
+            public function getBlogsByCategory($category)
+            {
+                $category = Category::whereRaw('LOWER(name) = ?', strtolower($category))->first();
+                if (!$category) {
+                    return response()->json(['error' => 'Category not found'], 404);
+                }
+                $blogs = $category->blogs;
+                return response()->json($blogs, 200);
+            }
+
 }

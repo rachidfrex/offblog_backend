@@ -26,6 +26,10 @@ class Blog extends Model
     {
     return $this->belongsToMany(Category::class);
     }
+        public function blogs()
+    {
+        return $this->belongsToMany(Blog::class);
+    }
     public function likedUsers()
     {
         return $this->belongsToMany(User::class, 'likes');

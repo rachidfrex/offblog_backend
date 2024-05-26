@@ -42,7 +42,10 @@ Route::post('/blogs/{id}/like', 'App\Http\Controllers\BlogController@toggleLike'
 Route::get('/getBlogs', [BlogController::class , 'getBlogs']);
 Route::get('/getBlog/{id}', [BlogController::class , 'getBlog']);
 
-// create category
+//  category
 Route::post('/category', [CategoryController::class , 'createCategory']);
 Route::delete('/category/{id}', [CategoryController::class , 'deleteCategory']);
 Route::get('/categories', [CategoryController::class , 'getCategories']);
+// get category blogs
+Route::get('/category/{category}/blogs', [BlogController::class, 'getBlogsByCategory']);
+

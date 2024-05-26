@@ -93,4 +93,5 @@ public function createCategory(Request $request)
 
         return response()->json(['success' => 'Category deleted successfully'], 200);
     }
+    
 }
