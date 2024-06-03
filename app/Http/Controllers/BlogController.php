@@ -16,14 +16,14 @@ use Illuminate\Support\Facades\Storage;
 
 class BlogController extends Controller
 {
-    // create a blog
+
 public function createBlog(Request $req)
 {
     $response = [];
     $blog = new Blog;
-    $blog->title = $req->input('title');
-    $blog->content = $req->input('content');
-    $blog->user_id = $req->input('user_id');
+    $blog->title = $req->post('title');
+    $blog->content = $req->post('content');
+    $blog->user_id = $req->post('user_id');
 
     // set likes_count to 0 be default
     $blog->likes_count = 0;
@@ -32,24 +32,20 @@ public function createBlog(Request $req)
     if($req->hasFile('image_url')) {
         // Validate the uploaded file
         $req->validate([
-            'image_url' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image_url' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
         ]);
         $image = $req->file('image_url');
-        $name = Str::slug($req->input('title')).'_'.time();
+        $name = Str::slug($req->post('title')).'_'.time();
         $extension = $image->getClientOriginalExtension();
         $fileName = "{$name}.{$extension}";
         $image->storeAs('images', $fileName, 'public');
         $blog->image_url = Storage::url("images/{$fileName}");
     }
 
-
-    
     // Find the categories by name and get their IDs
-    $categoryNames = json_decode($req->input('categories'));
+    $categoryNames = json_decode($req->post('categories'));
 
     $categories = Category::whereIn('name', $categoryNames)->get();
-    
-
 
     if (count($categoryNames) != count($categories)) {
         return response()->json(['error' => 'One of the categories does not exist']);
@@ -66,11 +62,10 @@ public function createBlog(Request $req)
         ];
         return response()->json($response, 201);
     } else {
-        
-    return response()->json(['error' => 'Blog creation failed'], 500);
-
+        return response()->json(['error' => 'Blog creation failed'], 500);
     }
 }
+
  
 // get all the blogs
     public function getBlogs()
@@ -162,16 +157,32 @@ public function createBlog(Request $req)
 
                 return response()->json($blog, 200);
             }
-            // category 
+            // get the blogs of a catrgory   
             
-            public function getBlogsByCategory($category)
-            {
-                $category = Category::whereRaw('LOWER(name) = ?', strtolower($category))->first();
-                if (!$category) {
-                    return response()->json(['error' => 'Category not found'], 404);
+            
+            
+                // public function getBlogsByCategory($categoryId)
+                // {
+                //     $category = Category::find($categoryId);
+                //     if (!$category) {
+                //         return response()->json(['error' => 'Category not found'], 404);
+                //     }
+
+                //     $blogs = Blog::whereHas('categories', function ($query) use ($categoryId) {
+                //         $query->where('id', $categoryId);
+                //     })->get();
+
+                //     return response()->json($blogs, 200);
+                // }
+                public function getBlogsByCategory($categoryId)
+                {
+                    $blogs = Blog::whereHas('categories', function ($query) use ($categoryId) {
+                        $query->where('categories.id', $categoryId);
+                    })->get();
+
+                    return response()->json($blogs, 200);
                 }
-                $blogs = $category->blogs;
-                return response()->json($blogs, 200);
-            }
+
+
 
 }
