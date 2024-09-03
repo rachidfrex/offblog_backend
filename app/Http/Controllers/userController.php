@@ -138,6 +138,10 @@ public function updateProfile(Request $req, $id)
     if ($req->has('email')) {
         $user->email = $req->input('email');
     }
+    if($req->has('bio')) {
+        // this is a text area how to deal with it 
+        $user->bio = $req->input('bio');
+    }
 
     // Handle the profile image upload
     if($req->hasFile('profile_image')) {
@@ -153,6 +157,7 @@ public function updateProfile(Request $req, $id)
         $image->storeAs('profile_images', $fileName, 'public');
         $user->profile_image = Storage::url("profile_images/{$fileName}");
     }
+
    
     $user->save();
 
